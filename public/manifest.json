@@ -6,7 +6,7 @@
   "display": "standalone",
   "scope": "/",
   "start_url": "https://status.igloo.ooo/",
-  "description": "Check the status of the Igloo platform",
+  "description": "Check the status of Igloo",
   "orientation": "any",
   "icons": [
     {
