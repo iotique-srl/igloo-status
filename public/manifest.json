@@ -1,25 +1,43 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "name": "Igloo Status",
+  "short_name": "Igloo Status",
+  "theme_color": "#0057cb",
+  "background_color": "#0057cb",
+  "display": "standalone",
+  "scope": "/",
+  "start_url": "https://status.igloo.ooo/",
+  "description": "Check the status of the Igloo platform",
+  "orientation": "any",
   "icons": [
     {
-      "src": "favicon.ico",
-      "sizes": "64x64 32x32 24x24 16x16",
-      "type": "image/x-icon"
+      "src": "icons/pwa-icon-512.png",
+      "type": "image/png",
+      "sizes": "512x512"
     },
     {
-      "src": "logo192.png",
+      "src": "icons/pwa-icon-192.png",
       "type": "image/png",
       "sizes": "192x192"
     },
     {
-      "src": "logo512.png",
+      "src": "icons/pwa-icon-144.png",
       "type": "image/png",
-      "sizes": "512x512"
+      "sizes": "144x144"
+    },
+    {
+      "src": "icons/pwa-icon-96.png",
+      "type": "image/png",
+      "sizes": "96x96"
+    },
+    {
+      "src": "icons/pwa-icon-72.png",
+      "type": "image/png",
+      "sizes": "72x72"
+    },
+    {
+      "src": "icons/pwa-icon-48.png",
+      "type": "image/png",
+      "sizes": "48x48"
     }
-  ],
-  "start_url": ".",
-  "display": "standalone",
-  "theme_color": "#000000",
-  "background_color": "#ffffff"
+  ]
 }

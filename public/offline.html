@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <meta name="HandheldFriendly" content="true" />
+    <title>Igloo Status</title>
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96.png" />
+  </head>
+  <body>
+    <div
+      style="
+        position: absolute;
+        margin: auto;
+        text-align: center;
+        width: 100%;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        display: table;
+        background: white;
+      "
+    >
+      <style type="text/css">
+        .noJS {
+          color: #0057cb;
+          font-size: 6rem;
+          font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+          font-weight: bold;
+          line-height: 1.17;
+          letter-spacing: 0.00735em;
+          margin: 0;
+          user-select: none;
+        }
+        .enableJS {
+          color: #0057cb;
+          font-size: 2.125rem;
+          font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+          font-weight: 500;
+          line-height: 1.6;
+          letter-spacing: 0.0075em;
+          margin: 0;
+          user-select: none;
+        }
+        @media only screen and (max-device-width: 700px) {
+          .noJS {
+            font-size: 3.75rem;
+          }
+          .enableJS {
+            font-size: 1.5rem;
+          }
+        }
+        @media only screen and (max-device-width: 450px) {
+          .noJS {
+            font-size: 3rem;
+          }
+          .enableJS {
+            font-size: 1.25rem;
+          }
+        }
+        @media only screen and (max-device-width: 350px) {
+          .noJS {
+            font-size: 2.125rem;
+          }
+          .enableJS {
+            font-size: 1rem;
+          }
+        }
+      </style>
+      <h1 class="noJS">You're offline</h1>
+      <h4 class="enableJS">Go back online to use Igloo Status</h4>
+    </div>
+  </body>
+</html>

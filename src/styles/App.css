@@ -1,0 +1,44 @@
+html {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: Roboto, Segoe UI, sans-serif;
+  -ms-content-zooming: none;
+  touch-action: none;
+  overscroll-behavior-y: none;
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+}
+
+.notSelectable {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.defaultCursor {
+  cursor: default;
+}
+
+.nonDraggable {
+  -webkit-user-drag: none;
+}
+
+::selection {
+  background: #0083ff; /* WebKit/Blink Browsers */
+  color: #fff;
+}
+
+::-moz-selection {
+  background: #0083ff; /* Gecko Browsers */
+  color: #fff;
+}
