@@ -57,9 +57,7 @@ export default class App extends Component {
   };
 
   updateDimensions = () => {
-    if (window.outerWidth !== this.state.width) {
-      this.setState({ width: window.outerWidth });
-    }
+    this.setState({ width: window.outerWidth });
   };
 
   componentDidMount() {
@@ -72,11 +70,11 @@ export default class App extends Component {
   }
 
   render() {
-    const { width, scrollTop } = this.state;
-
     // remove when actual data is available
     const online = uptimeLog[29].uptime === 100;
-    const loading = false;
+    const loading = true;
+
+    const { width, scrollTop } = this.state;
 
     const percentageStyle = {
       maxWidth: "256px",
@@ -90,6 +88,7 @@ export default class App extends Component {
           height: "100%",
           backgroundColor: online ? "#0057cb" : "#f44336",
           overflowY: "auto",
+          transition: "background-color 1s",
         }}
         className="notSelectable defaultCursor"
         onScroll={({ target: { scrollTop } }) => this.setState({ scrollTop })}
@@ -135,7 +134,11 @@ export default class App extends Component {
           elevation={8}
         >
           <div
-            style={{ maxWidth: "1080px", margin: "0 auto", padding: "0 48px" }}
+            style={{
+              maxWidth: "1080px",
+              margin: "0 auto",
+              padding: "0 48px",
+            }}
           >
             <Grid
               container
@@ -209,27 +212,41 @@ export default class App extends Component {
             </Grid>
             <Grid container>
               <Grid item xs>
-                <Typography
-                  variant={width > 448 ? "h5" : "h6"}
-                  style={{
-                    fontWeight: "bold",
-                    fontSize: width > 352 ? "" : "1.15rem",
-                  }}
-                >
-                  API uptime
-                </Typography>
+                {loading ? (
+                  <Skeleton style={{ width: "90%", maxWidth: "192px" }} />
+                ) : (
+                  <Typography
+                    variant={width > 448 ? "h5" : "h6"}
+                    style={{
+                      fontWeight: "bold",
+                      fontSize: width > 352 ? "" : "1.15rem",
+                    }}
+                  >
+                    API uptime
+                  </Typography>
+                )}
               </Grid>
               <Grid item xs>
-                <Typography
-                  variant={width > 448 ? "h5" : "h6"}
-                  style={{
-                    textAlign: "right",
-                    fontWeight: 300,
-                    fontSize: width > 352 ? "" : "1.15rem",
-                  }}
-                >
-                  Last 30 days
-                </Typography>
+                {loading ? (
+                  <Skeleton
+                    style={{
+                      width: "90%",
+                      maxWidth: "192px",
+                      marginLeft: "auto",
+                    }}
+                  />
+                ) : (
+                  <Typography
+                    variant={width > 448 ? "h5" : "h6"}
+                    style={{
+                      textAlign: "right",
+                      fontWeight: 300,
+                      fontSize: width > 352 ? "" : "1.15rem",
+                    }}
+                  >
+                    Last 30 days
+                  </Typography>
+                )}
               </Grid>
             </Grid>
             <Grid
@@ -258,26 +275,49 @@ export default class App extends Component {
                   arrow
                   placement="top"
                 >
-                  <Grid
-                    item
-                    style={{
-                      backgroundColor:
-                        uptime === 100
-                          ? "#00B512"
-                          : uptime > 95
-                          ? "#ffc804"
-                          : "#f44336",
-                      height: "24px",
-                      width:
-                        "calc((100% - " +
-                        (width > 752 ? 30 : 15) * 4 +
-                        "px)/" +
-                        (width > 752 ? 30 : 15) +
-                        ")",
-                      borderRadius: "4px",
-                      margin: "2px",
-                    }}
-                  />
+                  {loading ? (
+                    <Grid
+                      item
+                      style={{
+                        width:
+                          "calc((100% - " +
+                          (width > 752 ? 30 : 15) * 4 +
+                          "px)/" +
+                          (width > 752 ? 30 : 15) +
+                          ")",
+                        height: "24px",
+                        borderRadius: "4px",
+                        margin: "2px",
+                      }}
+                    >
+                      <Skeleton
+                        style={{
+                          borderRadius: "4px",
+                        }}
+                      />
+                    </Grid>
+                  ) : (
+                    <Grid
+                      item
+                      style={{
+                        backgroundColor:
+                          uptime === 100
+                            ? "#00B512"
+                            : uptime > 95
+                            ? "#ffc804"
+                            : "#f44336",
+                        height: "24px",
+                        width:
+                          "calc((100% - " +
+                          (width > 752 ? 30 : 15) * 4 +
+                          "px)/" +
+                          (width > 752 ? 30 : 15) +
+                          ")",
+                        borderRadius: "4px",
+                        margin: "2px",
+                      }}
+                    />
+                  )}
                 </Tooltip>
               ))}
             </Grid>
