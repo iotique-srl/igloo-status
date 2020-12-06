@@ -6,6 +6,15 @@ import Skeleton from "@material-ui/core/Skeleton";
 import Grid from "@material-ui/core/Grid";
 import Tooltip from "@material-ui/core/Tooltip";
 import "./styles/App.css";
+import { withStyles } from "@material-ui/core/styles";
+
+const CustomTooltip = withStyles({
+  tooltipPlacementTop: {
+    marginBottom: "8px",
+  },
+  tooltip: { backgroundColor: "rgba(97, 97, 97)" },
+  arrow: { color: "rgba(97, 97, 97)" },
+})(Tooltip);
 
 // remove when actual data is available
 const gaussianRand = () => {
@@ -27,11 +36,72 @@ const generateRandomUptimes = () => {
 };
 let uptimeLog = [];
 
+const fetchData = () => {
+  let online, averages, apiHistory;
+
+  fetch("health.igloo.ooo/online")
+    .then((response) => {
+      if (response.status !== 200) {
+        // handle errors
+        return;
+      }
+
+      response.json().then((data) => {
+        online = data;
+      });
+    })
+    .catch((error) => {
+      // handle errors
+    });
+
+  fetch("health.igloo.ooo/averages")
+    .then((response) => {
+      if (response.status !== 200) {
+        // handle errors
+        return;
+      }
+
+      response.json().then((data) => {
+        averages = { averageDay: null, averageWeek: null, averageMonth: null };
+      });
+    })
+    .catch((error) => {
+      // handle errors
+    });
+
+  fetch("health.igloo.ooo/history?service=api")
+    .then((response) => {
+      if (response.status !== 200) {
+        // handle errors
+        return;
+      }
+
+      response.json().then((data) => {
+        apiHistory = data;
+      });
+    })
+    .catch((error) => {
+      // handle errors
+    });
+
+  return [online, (averages = {}), apiHistory];
+};
+
 export default class App extends Component {
-  // remove when actual data is available
   constructor(props) {
     super(props);
 
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("service-worker.js");
+    }
+
+    const [
+      online,
+      { averageDay, averageWeek, averageMonth },
+      apiHistory,
+    ] = fetchData();
+
+    // remove when actual data is available
     uptimeLog = generateRandomUptimes();
 
     this.state = {
@@ -121,7 +191,7 @@ export default class App extends Component {
         <Paper
           style={{
             width: "100%",
-            minHeight: "calc(100% - 256px)",
+            minHeight: "100%",
             borderRadius:
               (1 - scrollTop / 256) * 32 +
               "px " +
@@ -257,46 +327,48 @@ export default class App extends Component {
                 paddingBottom: "64px",
               }}
             >
-              {uptimeLog.map(({ date, uptime }) => (
-                <Tooltip
-                  title={
-                    <Typography
-                      variant="body1"
-                      style={{ textAlign: "center" }}
-                      className="notSelectable"
-                    >
-                      <font style={{ fontWeight: "bold" }}>
-                        {moment(date).format("D MMM")}
-                      </font>
-                      <br />
-                      {uptime.toFixed(2) + "%"}
-                    </Typography>
-                  }
-                  arrow
-                  placement="top"
-                >
-                  {loading ? (
-                    <Grid
-                      item
+              {uptimeLog.map(({ date, uptime }) =>
+                loading ? (
+                  <Grid
+                    item
+                    style={{
+                      width:
+                        "calc((100% - " +
+                        (width > 752 ? 30 : 15) * 4 +
+                        "px)/" +
+                        (width > 752 ? 30 : 15) +
+                        ")",
+                      height: "24px",
+                      borderRadius: "4px",
+                      margin: "2px",
+                    }}
+                  >
+                    <Skeleton
+                      variant="rectangular"
                       style={{
-                        width:
-                          "calc((100% - " +
-                          (width > 752 ? 30 : 15) * 4 +
-                          "px)/" +
-                          (width > 752 ? 30 : 15) +
-                          ")",
-                        height: "24px",
                         borderRadius: "4px",
-                        margin: "2px",
                       }}
-                    >
-                      <Skeleton
-                        style={{
-                          borderRadius: "4px",
-                        }}
-                      />
-                    </Grid>
-                  ) : (
+                    />
+                  </Grid>
+                ) : (
+                  <CustomTooltip
+                    title={
+                      <Typography
+                        variant="body1"
+                        style={{ textAlign: "center" }}
+                        className="notSelectable"
+                      >
+                        <font style={{ fontWeight: "bold" }}>
+                          {moment(date).format("D MMM")}
+                        </font>
+                        <br />
+                        {uptime.toFixed(2) + "%"}
+                      </Typography>
+                    }
+                    enterTouchDelay={0}
+                    arrow
+                    placement="top"
+                  >
                     <Grid
                       item
                       style={{
@@ -317,9 +389,9 @@ export default class App extends Component {
                         margin: "2px",
                       }}
                     />
-                  )}
-                </Tooltip>
-              ))}
+                  </CustomTooltip>
+                )
+              )}
             </Grid>
           </div>
         </Paper>

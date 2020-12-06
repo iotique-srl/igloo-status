@@ -1,5 +1,6 @@
 html {
   height: 100%;
+  overflow: hidden;
 }
 
 body {
@@ -9,6 +10,7 @@ body {
   -ms-content-zooming: none;
   touch-action: none;
   overscroll-behavior-y: none;
+  overflow-y: auto;
   position: fixed;
   width: 100%;
   height: 100%;
