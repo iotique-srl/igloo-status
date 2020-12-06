@@ -142,7 +142,7 @@ export default class App extends Component {
   render() {
     // remove when actual data is available
     const online = uptimeLog[29].uptime === 100;
-    const loading = true;
+    const loading = false;
 
     const { width, scrollTop } = this.state;
 
@@ -173,7 +173,9 @@ export default class App extends Component {
             justifyContent: "center",
             alignItems: "center",
             position: "absolute",
-            opacity: 1 - scrollTop / (width > 752 ? 64 : 96),
+            opacity: Math.max(1 - scrollTop / (width > 752 ? 64 : 96), 0),
+            pointerEvents: "none",
+            zIndex: 10,
           }}
         >
           {loading ? (
@@ -200,6 +202,7 @@ export default class App extends Component {
             boxShadow:
               "0px -5px 5px -3px rgba(0,0,0,0.2), 0px -8px 10px 1px rgba(0,0,0,0.14), 0px -3px 14px 2px rgba(0,0,0,0.12)",
             marginTop: "256px",
+            zIndex: 20,
           }}
           elevation={8}
         >
