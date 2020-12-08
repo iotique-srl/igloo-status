@@ -5,8 +5,12 @@ import Paper from "@material-ui/core/Paper";
 import Skeleton from "@material-ui/core/Skeleton";
 import Grid from "@material-ui/core/Grid";
 import Tooltip from "@material-ui/core/Tooltip";
-import "./styles/App.css";
+import Snackbar from "@material-ui/core/Snackbar";
+import IconButton from "@material-ui/core/IconButton";
 import { withStyles } from "@material-ui/core/styles";
+import Slide from "@material-ui/core/Slide";
+import Refresh from "@material-ui/icons/Refresh";
+import "./styles/App.css";
 
 const CustomTooltip = withStyles({
   tooltipPlacementTop: {
@@ -143,6 +147,7 @@ export default class App extends Component {
     // remove when actual data is available
     const online = uptimeLog[29].uptime === 100;
     const loading = false;
+    const error = false;
 
     const { width, scrollTop } = this.state;
 
@@ -398,6 +403,20 @@ export default class App extends Component {
             </Grid>
           </div>
         </Paper>
+        <Snackbar
+          open={error}
+          anchorOrigin={{
+            vertical: "bottom",
+            horizontal: "center",
+          }}
+          message="We couldn't load this page"
+          TransitionComponent={(props) => <Slide {...props} direction="up" />}
+          action={
+            <IconButton style={{ color: "white" }}>
+              <Refresh />
+            </IconButton>
+          }
+        ></Snackbar>
       </div>
     );
   }
