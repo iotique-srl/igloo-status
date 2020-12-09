@@ -183,7 +183,7 @@ export default class App extends Component {
             zIndex: 10,
           }}
         >
-          {loading ? (
+          {loading || error ? (
             <Skeleton
               style={{
                 backgroundColor: "rgba(255, 255, 255, 0.11)",
@@ -227,7 +227,7 @@ export default class App extends Component {
                   variant={width > 960 || width < 752 ? "h2" : "h3"}
                   style={{ ...percentageStyle, fontWeight: "bold" }}
                 >
-                  {loading ? (
+                  {loading || error ? (
                     <Skeleton />
                   ) : (
                     uptimeLog[29].uptime.toFixed(2) + "%"
@@ -237,7 +237,7 @@ export default class App extends Component {
                   variant={width > 960 || width < 752 ? "h5" : "h6"}
                   style={{ ...percentageStyle, fontWeight: 300 }}
                 >
-                  {loading ? <Skeleton /> : "Last 24 hours"}
+                  {loading || error ? <Skeleton /> : "Last 24 hours"}
                 </Typography>
               </Grid>
               <Grid item xs={width > 752 ? 4 : 12} style={{ margin: "16px 0" }}>
@@ -245,7 +245,7 @@ export default class App extends Component {
                   variant={width > 960 || width < 752 ? "h2" : "h3"}
                   style={{ ...percentageStyle, fontWeight: "bold" }}
                 >
-                  {loading ? (
+                  {loading || error ? (
                     <Skeleton />
                   ) : (
                     (
@@ -261,7 +261,7 @@ export default class App extends Component {
                   variant={width > 960 || width < 752 ? "h5" : "h6"}
                   style={{ ...percentageStyle, fontWeight: 300 }}
                 >
-                  {loading ? <Skeleton /> : "Last 7 days"}
+                  {loading || error ? <Skeleton /> : "Last 7 days"}
                 </Typography>
               </Grid>
               <Grid item xs={width > 752 ? 4 : 12} style={{ margin: "16px 0" }}>
@@ -269,7 +269,7 @@ export default class App extends Component {
                   variant={width > 960 || width < 752 ? "h2" : "h3"}
                   style={{ ...percentageStyle, fontWeight: "bold" }}
                 >
-                  {loading ? (
+                  {loading || error ? (
                     <Skeleton />
                   ) : (
                     (
@@ -284,13 +284,13 @@ export default class App extends Component {
                   variant={width > 960 || width < 752 ? "h5" : "h6"}
                   style={{ ...percentageStyle, fontWeight: 300 }}
                 >
-                  {loading ? <Skeleton /> : "Last 30 days"}
+                  {loading || error ? <Skeleton /> : "Last 30 days"}
                 </Typography>
               </Grid>
             </Grid>
             <Grid container>
               <Grid item xs>
-                {loading ? (
+                {loading || error ? (
                   <Skeleton style={{ width: "90%", maxWidth: "192px" }} />
                 ) : (
                   <Typography
@@ -305,7 +305,7 @@ export default class App extends Component {
                 )}
               </Grid>
               <Grid item xs>
-                {loading ? (
+                {loading || error ? (
                   <Skeleton
                     style={{
                       width: "90%",
@@ -336,7 +336,7 @@ export default class App extends Component {
               }}
             >
               {uptimeLog.map(({ date, uptime }) =>
-                loading ? (
+                loading || error ? (
                   <Grid
                     item
                     style={{
