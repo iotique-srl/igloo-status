@@ -38,7 +38,22 @@ const generateRandomUptimes = () => {
     uptime: Math.min(101 - Math.abs((gaussianRand() - 0.5) * 10), 100),
   }));
 };
-let uptimeLog = [];
+
+const debounce = (func, wait) => {
+  let timeout;
+
+  return (...args) => {
+    const later = () => {
+      timeout = null;
+
+      func(...args);
+    };
+
+    clearTimeout(timeout);
+
+    timeout = setTimeout(later, wait);
+  };
+};
 
 const fetchData = () => {
   let online, averages, apiHistory;
@@ -88,7 +103,26 @@ const fetchData = () => {
       // handle errors
     });
 
-  return [online, (averages = {}), apiHistory];
+  return {
+    online: generateRandomUptimes()[29].uptime === 100,
+    averages: {
+      averageDay: generateRandomUptimes()[29].uptime.toFixed(2),
+      averageWeek: (
+        generateRandomUptimes()
+          .slice(-7)
+          .map(({ uptime }) => uptime)
+          .reduce((accumulator, value) => accumulator + value) /
+        generateRandomUptimes().slice(-7).length
+      ).toFixed(2),
+      averageMonth: (
+        generateRandomUptimes()
+          .map(({ uptime }) => uptime)
+          .reduce((accumulator, value) => accumulator + value) /
+        generateRandomUptimes().length
+      ).toFixed(2),
+    },
+    apiHistory: generateRandomUptimes(),
+  };
 };
 
 export default class App extends Component {
@@ -99,57 +133,71 @@ export default class App extends Component {
       navigator.serviceWorker.register("service-worker.js");
     }
 
-    const [
-      online,
-      { averageDay, averageWeek, averageMonth },
-      apiHistory,
-    ] = fetchData();
-
-    // remove when actual data is available
-    uptimeLog = generateRandomUptimes();
-
     this.state = {
-      width: false,
       scrollTop: 0,
+      ...fetchData(),
     };
   }
 
-  debounce = (func, wait) => {
-    let timeout;
-
-    return (...args) => {
-      const later = () => {
-        timeout = null;
-
-        func(...args);
-      };
-
-      clearTimeout(timeout);
-
-      timeout = setTimeout(later, wait);
-    };
-  };
-
   updateDimensions = () => {
-    this.setState({ width: window.outerWidth });
+    const {
+      greaterThan960,
+      greaterThan752,
+      greaterThan448,
+      greaterThan352,
+    } = this.state;
+
+    if (window.innerWidth > 960) {
+      !greaterThan960 && this.setState({ greaterThan960: true });
+    } else {
+      greaterThan960 && this.setState({ greaterThan960: false });
+    }
+
+    if (window.innerWidth > 752) {
+      !greaterThan752 && this.setState({ greaterThan752: true });
+    } else {
+      greaterThan752 && this.setState({ greaterThan752: false });
+    }
+
+    if (window.innerWidth > 448) {
+      !greaterThan448 && this.setState({ greaterThan448: true });
+    } else {
+      greaterThan448 && this.setState({ greaterThan448: false });
+    }
+
+    if (window.innerWidth > 352) {
+      !greaterThan352 && this.setState({ greaterThan352: true });
+    } else {
+      greaterThan352 && this.setState({ greaterThan352: false });
+    }
   };
 
   componentDidMount() {
     this.updateDimensions();
-    window.addEventListener("resize", this.debounce(this.updateDimensions));
+    window.addEventListener("resize", debounce(this.updateDimensions));
+
+    setInterval(fetchData, 5_000);
   }
 
   componentWillUnmount() {
-    window.removeEventListener("resize", this.debounce(this.updateDimensions));
+    window.removeEventListener("resize", debounce(this.updateDimensions));
   }
 
   render() {
     // remove when actual data is available
-    const online = uptimeLog[29].uptime === 100;
     const loading = false;
     const error = false;
 
-    const { width, scrollTop } = this.state;
+    const {
+      scrollTop,
+      online,
+      averages: { averageDay, averageWeek, averageMonth },
+      apiHistory,
+      greaterThan960,
+      greaterThan752,
+      greaterThan448,
+      greaterThan352,
+    } = this.state;
 
     const percentageStyle = {
       maxWidth: "256px",
@@ -169,7 +217,7 @@ export default class App extends Component {
         onScroll={({ target: { scrollTop } }) => this.setState({ scrollTop })}
       >
         <Typography
-          variant={width > 752 ? "h1" : width > 448 ? "h2" : "h3"}
+          variant={greaterThan752 ? "h1" : greaterThan448 ? "h2" : "h3"}
           style={{
             color: "white",
             height: "256px",
@@ -178,7 +226,7 @@ export default class App extends Component {
             justifyContent: "center",
             alignItems: "center",
             position: "absolute",
-            opacity: Math.max(1 - scrollTop / (width > 752 ? 64 : 96), 0),
+            opacity: Math.max(1 - scrollTop / (greaterThan752 ? 64 : 96), 0),
             pointerEvents: "none",
             zIndex: 10,
           }}
@@ -220,68 +268,57 @@ export default class App extends Component {
           >
             <Grid
               container
-              style={{ padding: width > 752 ? "96px 0" : "48px 0" }}
+              style={{ padding: greaterThan752 ? "96px 0" : "48px 0" }}
             >
-              <Grid item xs={width > 752 ? 4 : 12} style={{ margin: "16px 0" }}>
+              <Grid
+                item
+                xs={greaterThan752 ? 4 : 12}
+                style={{ margin: "16px 0" }}
+              >
                 <Typography
-                  variant={width > 960 || width < 752 ? "h2" : "h3"}
+                  variant={greaterThan960 || !greaterThan752 ? "h2" : "h3"}
                   style={{ ...percentageStyle, fontWeight: "bold" }}
                 >
-                  {loading || error ? (
-                    <Skeleton />
-                  ) : (
-                    uptimeLog[29].uptime.toFixed(2) + "%"
-                  )}
+                  {loading || error ? <Skeleton /> : averageDay + "%"}
                 </Typography>
                 <Typography
-                  variant={width > 960 || width < 752 ? "h5" : "h6"}
+                  variant={greaterThan960 || !greaterThan752 ? "h5" : "h6"}
                   style={{ ...percentageStyle, fontWeight: 300 }}
                 >
                   {loading || error ? <Skeleton /> : "Last 24 hours"}
                 </Typography>
               </Grid>
-              <Grid item xs={width > 752 ? 4 : 12} style={{ margin: "16px 0" }}>
+              <Grid
+                item
+                xs={greaterThan752 ? 4 : 12}
+                style={{ margin: "16px 0" }}
+              >
                 <Typography
-                  variant={width > 960 || width < 752 ? "h2" : "h3"}
+                  variant={greaterThan960 || !greaterThan752 ? "h2" : "h3"}
                   style={{ ...percentageStyle, fontWeight: "bold" }}
                 >
-                  {loading || error ? (
-                    <Skeleton />
-                  ) : (
-                    (
-                      uptimeLog
-                        .slice(-7)
-                        .map(({ uptime }) => uptime)
-                        .reduce((accumulator, value) => accumulator + value) /
-                      uptimeLog.slice(-7).length
-                    ).toFixed(2) + "%"
-                  )}
+                  {loading || error ? <Skeleton /> : averageWeek + "%"}
                 </Typography>
                 <Typography
-                  variant={width > 960 || width < 752 ? "h5" : "h6"}
+                  variant={greaterThan960 || !greaterThan752 ? "h5" : "h6"}
                   style={{ ...percentageStyle, fontWeight: 300 }}
                 >
                   {loading || error ? <Skeleton /> : "Last 7 days"}
                 </Typography>
               </Grid>
-              <Grid item xs={width > 752 ? 4 : 12} style={{ margin: "16px 0" }}>
+              <Grid
+                item
+                xs={greaterThan752 ? 4 : 12}
+                style={{ margin: "16px 0" }}
+              >
                 <Typography
-                  variant={width > 960 || width < 752 ? "h2" : "h3"}
+                  variant={greaterThan960 || !greaterThan752 ? "h2" : "h3"}
                   style={{ ...percentageStyle, fontWeight: "bold" }}
                 >
-                  {loading || error ? (
-                    <Skeleton />
-                  ) : (
-                    (
-                      uptimeLog
-                        .map(({ uptime }) => uptime)
-                        .reduce((accumulator, value) => accumulator + value) /
-                      uptimeLog.length
-                    ).toFixed(2) + "%"
-                  )}
+                  {loading || error ? <Skeleton /> : averageMonth + "%"}
                 </Typography>
                 <Typography
-                  variant={width > 960 || width < 752 ? "h5" : "h6"}
+                  variant={greaterThan960 || !greaterThan752 ? "h5" : "h6"}
                   style={{ ...percentageStyle, fontWeight: 300 }}
                 >
                   {loading || error ? <Skeleton /> : "Last 30 days"}
@@ -294,10 +331,10 @@ export default class App extends Component {
                   <Skeleton style={{ width: "90%", maxWidth: "192px" }} />
                 ) : (
                   <Typography
-                    variant={width > 448 ? "h5" : "h6"}
+                    variant={greaterThan448 ? "h5" : "h6"}
                     style={{
                       fontWeight: "bold",
-                      fontSize: width > 352 ? "" : "1.15rem",
+                      fontSize: greaterThan352 ? "" : "1.15rem",
                     }}
                   >
                     API uptime
@@ -315,11 +352,11 @@ export default class App extends Component {
                   />
                 ) : (
                   <Typography
-                    variant={width > 448 ? "h5" : "h6"}
+                    variant={greaterThan448 ? "h5" : "h6"}
                     style={{
                       textAlign: "right",
                       fontWeight: 300,
-                      fontSize: width > 352 ? "" : "1.15rem",
+                      fontSize: greaterThan352 ? "" : "1.15rem",
                     }}
                   >
                     Last 30 days
@@ -335,16 +372,16 @@ export default class App extends Component {
                 paddingBottom: "64px",
               }}
             >
-              {uptimeLog.map(({ date, uptime }) =>
+              {apiHistory.map(({ date, uptime }) =>
                 loading || error ? (
                   <Grid
                     item
                     style={{
                       width:
                         "calc((100% - " +
-                        (width > 752 ? 30 : 15) * 4 +
+                        (greaterThan752 ? 30 : 15) * 4 +
                         "px)/" +
-                        (width > 752 ? 30 : 15) +
+                        (greaterThan752 ? 30 : 15) +
                         ")",
                       height: "24px",
                       borderRadius: "4px",
@@ -389,9 +426,9 @@ export default class App extends Component {
                         height: "24px",
                         width:
                           "calc((100% - " +
-                          (width > 752 ? 30 : 15) * 4 +
+                          (greaterThan752 ? 30 : 15) * 4 +
                           "px)/" +
-                          (width > 752 ? 30 : 15) +
+                          (greaterThan752 ? 30 : 15) +
                           ")",
                         borderRadius: "4px",
                         margin: "2px",
