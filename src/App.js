@@ -20,25 +20,6 @@ const CustomTooltip = withStyles({
   arrow: { color: "rgba(97, 97, 97)" },
 })(Tooltip);
 
-// remove when actual data is available
-const gaussianRand = () => {
-  let random = 0;
-
-  for (let i = 0; i < 25; i += 1) {
-    random += Math.random();
-  }
-
-  return random / 25;
-};
-const generateRandomUptimes = () => {
-  const emptyArray = Array.apply(null, { length: 30 });
-
-  return emptyArray.map(() => ({
-    date: new Date(),
-    uptime: Math.min(101 - Math.abs((gaussianRand() - 0.5) * 10), 100),
-  }));
-};
-
 const debounce = (func, wait) => {
   let timeout;
 
@@ -58,7 +39,7 @@ const debounce = (func, wait) => {
 const fetchData = () => {
   let online, averages, apiHistory;
 
-  fetch("health.igloo.ooo/online")
+  fetch("https://health.igloo.ooo/online")
     .then((response) => {
       if (response.status !== 200) {
         // handle errors
@@ -73,7 +54,7 @@ const fetchData = () => {
       // handle errors
     });
 
-  fetch("health.igloo.ooo/averages")
+  fetch("https://health.igloo.ooo/averages")
     .then((response) => {
       if (response.status !== 200) {
         // handle errors
@@ -81,14 +62,14 @@ const fetchData = () => {
       }
 
       response.json().then((data) => {
-        averages = { averageDay: null, averageWeek: null, averageMonth: null };
+        averages = data;
       });
     })
     .catch((error) => {
       // handle errors
     });
 
-  fetch("health.igloo.ooo/history?service=api")
+  fetch("https://health.igloo.ooo/history?service=api")
     .then((response) => {
       if (response.status !== 200) {
         // handle errors
@@ -104,24 +85,9 @@ const fetchData = () => {
     });
 
   return {
-    online: generateRandomUptimes()[29].uptime === 100,
-    averages: {
-      averageDay: generateRandomUptimes()[29].uptime.toFixed(2),
-      averageWeek: (
-        generateRandomUptimes()
-          .slice(-7)
-          .map(({ uptime }) => uptime)
-          .reduce((accumulator, value) => accumulator + value) /
-        generateRandomUptimes().slice(-7).length
-      ).toFixed(2),
-      averageMonth: (
-        generateRandomUptimes()
-          .map(({ uptime }) => uptime)
-          .reduce((accumulator, value) => accumulator + value) /
-        generateRandomUptimes().length
-      ).toFixed(2),
-    },
-    apiHistory: generateRandomUptimes(),
+    online,
+    averages: {},
+    apiHistory,
   };
 };
 
@@ -135,6 +101,8 @@ export default class App extends Component {
 
     this.state = {
       scrollTop: 0,
+      loading: true,
+      error: false,
       ...fetchData(),
     };
   }
@@ -184,19 +152,21 @@ export default class App extends Component {
   }
 
   render() {
-    // remove when actual data is available
-    const loading = false;
-    const error = false;
-
     const {
       scrollTop,
       online,
-      averages: { averageDay, averageWeek, averageMonth },
+      averages: {
+        "24hours": averageDay,
+        "7days": averageWeek,
+        "30days": averageMonth,
+      },
       apiHistory,
       greaterThan960,
       greaterThan752,
       greaterThan448,
       greaterThan352,
+      error,
+      loading,
     } = this.state;
 
     const percentageStyle = {
@@ -372,71 +342,72 @@ export default class App extends Component {
                 paddingBottom: "64px",
               }}
             >
-              {apiHistory.map(({ date, uptime }) =>
-                loading || error ? (
-                  <Grid
-                    item
-                    style={{
-                      width:
-                        "calc((100% - " +
-                        (greaterThan752 ? 30 : 15) * 4 +
-                        "px)/" +
-                        (greaterThan752 ? 30 : 15) +
-                        ")",
-                      height: "24px",
-                      borderRadius: "4px",
-                      margin: "2px",
-                    }}
-                  >
-                    <Skeleton
-                      variant="rectangular"
-                      style={{
-                        borderRadius: "4px",
-                      }}
-                    />
-                  </Grid>
-                ) : (
-                  <CustomTooltip
-                    title={
-                      <Typography
-                        variant="body1"
-                        style={{ textAlign: "center" }}
-                        className="notSelectable"
-                      >
-                        <font style={{ fontWeight: "bold" }}>
-                          {moment(date).format("D MMM")}
-                        </font>
-                        <br />
-                        {uptime.toFixed(2) + "%"}
-                      </Typography>
-                    }
-                    enterTouchDelay={0}
-                    arrow
-                    placement="top"
-                  >
+              {loading || error
+                ? [...Array(30)].map((_, index) => (
                     <Grid
                       item
                       style={{
-                        backgroundColor:
-                          uptime === 100
-                            ? "#00B512"
-                            : uptime > 95
-                            ? "#ffc804"
-                            : "#f44336",
-                        height: "24px",
                         width:
                           "calc((100% - " +
                           (greaterThan752 ? 30 : 15) * 4 +
                           "px)/" +
                           (greaterThan752 ? 30 : 15) +
                           ")",
+                        height: "24px",
                         borderRadius: "4px",
                         margin: "2px",
                       }}
-                    />
-                  </CustomTooltip>
-                )
-              )}
+                      key={"uptime-skeleton-" + index}
+                    >
+                      <Skeleton
+                        variant="rectangular"
+                        style={{
+                          borderRadius: "4px",
+                        }}
+                      />
+                    </Grid>
+                  ))
+                : apiHistory.map(({ date, uptime }) => (
+                    <CustomTooltip
+                      title={
+                        <Typography
+                          variant="body1"
+                          style={{ textAlign: "center" }}
+                          className="notSelectable"
+                        >
+                          <font style={{ fontWeight: "bold" }}>
+                            {moment(date).format("D MMM")}
+                          </font>
+                          <br />
+                          {uptime.toFixed(2) + "%"}
+                        </Typography>
+                      }
+                      enterTouchDelay={0}
+                      arrow
+                      placement="top"
+                    >
+                      <Grid
+                        item
+                        style={{
+                          backgroundColor:
+                            uptime === 95
+                              ? "#00B512"
+                              : uptime > 90
+                              ? "#ffc804"
+                              : "#f44336",
+                          height: "24px",
+                          width:
+                            "calc((100% - " +
+                            (greaterThan752 ? 30 : 15) * 4 +
+                            "px)/" +
+                            (greaterThan752 ? 30 : 15) +
+                            ")",
+                          borderRadius: "4px",
+                          margin: "2px",
+                        }}
+                      />
+                    </CustomTooltip>
+                  ))}
             </Grid>
           </div>
         </Paper>
