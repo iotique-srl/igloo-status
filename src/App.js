@@ -85,7 +85,15 @@ export default class App extends Component {
           return [];
         }
 
-        return (await response.json()) || [];
+        return (
+          (await response.json()).sort((a, b) =>
+            +new Date(a.date) > +new Date(b.date)
+              ? 1
+              : +new Date(a.date) === +new Date(b.date)
+              ? 0
+              : -1
+          ) || []
+        );
       })
       .catch(() => []);
 
@@ -400,9 +408,9 @@ export default class App extends Component {
                           item
                           style={{
                             backgroundColor:
-                              uptime > 0.95
+                              uptime > 0.99
                                 ? "#00B512"
-                                : uptime > 0.9
+                                : uptime > 0.95
                                 ? "#ffc804"
                                 : uptime === null
                                 ? "#f2f2f2"
