@@ -315,41 +315,41 @@ export default class App extends Component {
               </Grid>
               <Grid container>
                 <Grid item xs>
-                  {loading || error ? (
-                    <Skeleton style={{ width: "90%", maxWidth: "192px" }} />
-                  ) : (
-                    <Typography
-                      variant={greaterThan448 ? "h5" : "h6"}
-                      style={{
-                        fontWeight: "bold",
-                        fontSize: greaterThan352 ? "" : "1.15rem",
-                      }}
-                    >
-                      API uptime
-                    </Typography>
-                  )}
+                  <Typography
+                    variant={greaterThan448 ? "h5" : "h6"}
+                    style={{
+                      fontWeight: "bold",
+                      fontSize: greaterThan352 ? "" : "1.15rem",
+                    }}
+                  >
+                    {loading || error ? (
+                      <Skeleton style={{ width: "90%", maxWidth: "192px" }} />
+                    ) : (
+                      "API uptime"
+                    )}
+                  </Typography>
                 </Grid>
                 <Grid item xs>
-                  {loading || error ? (
-                    <Skeleton
-                      style={{
-                        width: "90%",
-                        maxWidth: "192px",
-                        marginLeft: "auto",
-                      }}
-                    />
-                  ) : (
-                    <Typography
-                      variant={greaterThan448 ? "h5" : "h6"}
-                      style={{
-                        textAlign: "right",
-                        fontWeight: 300,
-                        fontSize: greaterThan352 ? "" : "1.15rem",
-                      }}
-                    >
-                      Last 30 days
-                    </Typography>
-                  )}
+                  <Typography
+                    variant={greaterThan448 ? "h5" : "h6"}
+                    style={{
+                      textAlign: "right",
+                      fontWeight: 300,
+                      fontSize: greaterThan352 ? "" : "1.15rem",
+                    }}
+                  >
+                    {loading || error ? (
+                      <Skeleton
+                        style={{
+                          width: "90%",
+                          maxWidth: "192px",
+                          marginLeft: "auto",
+                        }}
+                      />
+                    ) : (
+                      "Last 30 days"
+                    )}
+                  </Typography>
                 </Grid>
               </Grid>
               <Grid
@@ -381,6 +381,7 @@ export default class App extends Component {
                           variant="rectangular"
                           style={{
                             borderRadius: "4px",
+                            height: "100%",
                           }}
                         />
                       </Grid>
