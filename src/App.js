@@ -89,8 +89,21 @@ export default withTranslation()(
             return [];
           }
 
+          let uptimeList = (await response.json()).slice(-30);
+
+          if (uptimeList.length < 30) {
+            Array(30 - uptimeList.length)
+              .fill()
+              .map(() =>
+                uptimeList.push({
+                  date: moment(uptimeList[0]).subtract(1, "days"),
+                  uptime: null,
+                })
+              );
+          }
+
           return (
-            (await response.json()).sort((a, b) =>
+            uptimeList.sort((a, b) =>
               +new Date(a.date) > +new Date(b.date)
                 ? 1
                 : +new Date(a.date) === +new Date(b.date)
@@ -421,6 +434,7 @@ export default withTranslation()(
                           enterTouchDelay={0}
                           arrow
                           placement="top"
+                          {...(uptime === null ? { open: false } : {})}
                         >
                           <Grid
                             item
@@ -431,7 +445,7 @@ export default withTranslation()(
                                   : uptime > 0.95
                                   ? "#ffc804"
                                   : uptime === null
-                                  ? "#f2f2f2"
+                                  ? "#eee"
                                   : "#f44336",
                               height: "24px",
                               width:
