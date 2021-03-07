@@ -73,8 +73,25 @@
           }
         }
       </style>
-      <h1 class="noJS">You're offline</h1>
-      <h4 class="enableJS">Go back online to use Igloo Status</h4>
+      <h1 class="noJS" id="offline-en" style="display: none">You're offline</h1>
+      <h1 class="noJS" id="offline-it" style="display: none">Offline</h1>
+      <h4 class="enableJS" id="back-online-en" style="display: none">
+        Go back online to use Igloo Status
+      </h4>
+      <h4 class="enableJS" id="back-online-it" style="display: none">
+        Torna online per usare Igloo Status
+      </h4>
+      <script>
+        if (
+          (navigator.language || navigator.userLanguage).slice(0, 2) === "it"
+        ) {
+          document.getElementById("offline-it").style.display = "";
+          document.getElementById("back-online-it").style.display = "";
+        } else {
+          document.getElementById("offline-en").style.display = "";
+          document.getElementById("back-online-en").style.display = "";
+        }
+      </script>
     </div>
   </body>
 </html>
