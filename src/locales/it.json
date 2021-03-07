@@ -1,0 +1,12 @@
+{
+  "translations": {
+    "Igloo is ": "Igloo è ",
+    "online": "online",
+    "offline": "offline",
+    "Last 24 hours": "Ultime 24 ore",
+    "Last 7 days": "Ultimi 7 giorni",
+    "Last 30 days": "Ultimi 30 giorni",
+    "API uptime": "Stato dell'API",
+    "We couldn't load this page": "Non siamo riusciti a caricare questa pagina"
+  }
+}
