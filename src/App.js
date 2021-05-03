@@ -166,7 +166,7 @@ export default withTranslation()(
       window.addEventListener("resize", debounce(this.updateDimensions));
 
       this.fetchData();
-      setInterval(this.fetchData, 5_000);
+      setInterval(this.fetchData, 60_000);
     }
 
     componentWillUnmount() {
