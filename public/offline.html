@@ -8,9 +8,9 @@
     />
     <meta name="HandheldFriendly" content="true" />
     <title>Igloo Status</title>
-    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png" />
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
-    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
   </head>
   <body>
     <div
@@ -23,7 +23,10 @@
         left: 0;
         bottom: 0;
         right: 0;
-        display: table;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
         background: white;
       "
     >
@@ -83,7 +86,8 @@
       </h4>
       <script>
         if (
-          (navigator.language || navigator.userLanguage).slice(0, 2) === "it"
+          (localStorage.getItem("language") ||
+            (navigator.language || navigator.userLanguage).slice(0, 2)) === "it"
         ) {
           document.getElementById("offline-it").style.display = "";
           document.getElementById("back-online-it").style.display = "";
